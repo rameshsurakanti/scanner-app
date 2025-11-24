@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan To Return - Secure Tag</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; background: #f4f4f9; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: #25D366; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        .hidden { display: none; }
+        #loading { font-style: italic; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 style="color:#333;">Scan To Return</h2>
+    <div id="loading">Scanning tag security...</div>
+
+    <div id="activation-screen" class="hidden">
+        <p>This tag is new! Activate it now.</p>
+        <input type="text" id="itemName" placeholder="Item Name (e.g. Keys)">
+        <input type="number" id="phone" placeholder="Your WhatsApp Number (with country code)">
+        <button onclick="activateTag()">Activate Protection</button>
+    </div>
+
+    <div id="found-screen" class="hidden">
+        <h3>Owner Found!</h3>
+        <p>Please help return this item.</p>
+        <a id="wa-link" href="">
+            <button>Chat with Owner on WhatsApp</button>
+        </a>
+    </div>
+</div>
+
+<script>
+    const SCRIPT_URL = https://script.google.com/macros/s/AKfycbxWzx8szODLwy0BZVXqu3_AZR2uXINUMbarn69pIQzby-agKvuhq5fWfZheAQvxt4MB/exec; // PASTE YOUR URL HERE
+
+    // 1. Get Tag ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tagId = urlParams.get('id');
+
+    if(!tagId) { document.getElementById('loading').innerText = "Invalid QR Code"; }
+
+    // 2. Check Status on Load
+    fetch(SCRIPT_URL + "?id=" + tagId)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('loading').classList.add('hidden');
+        
+        if (data.result === "new") {
+            document.getElementById('activation-screen').classList.remove('hidden');
+        } else if (data.result === "found") {
+            document.getElementById('found-screen').classList.remove('hidden');
+            document.getElementById('wa-link').href = data.wa_link;
+        }
+    });
+
+    // 3. Activation Function
+    function activateTag() {
+        const item = document.getElementById('itemName').value;
+        const phone = document.getElementById('phone').value;
+        
+        document.getElementById('activation-screen').innerHTML = "Activating...";
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ id: tagId, item: item, phone: phone })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.result === "success") {
+                alert("Activated! You can now close this page.");
+                location.reload();
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
