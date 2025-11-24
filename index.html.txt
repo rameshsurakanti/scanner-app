@@ -35,7 +35,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = https://script.google.com/macros/s/AKfycbxWzx8szODLwy0BZVXqu3_AZR2uXINUMbarn69pIQzby-agKvuhq5fWfZheAQvxt4MB/exec; // PASTE YOUR URL HERE
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWzx8szODLwy0BZVXqu3_AZR2uXINUMbarn69pIQzby-agKvuhq5fWfZheAQvxt4MB/exec"; // PASTE YOUR URL HERE
 
     // 1. Get Tag ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -79,4 +79,5 @@
 </script>
 
 </body>
+
 </html>
